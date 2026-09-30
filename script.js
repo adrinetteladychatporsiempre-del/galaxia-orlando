@@ -1,11 +1,15 @@
 const canvas = document.getElementById('galaxyCanvas');
 const ctx = canvas.getContext('2d');
+const backgroundMusic = document.getElementById('backgroundMusic');
+const musicToggle = document.getElementById('musicToggle');
+const nowPlaying = document.getElementById('nowPlaying');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let animationId;
 let time = 0;
+let musicPlaying = false;
 
 // Colores para los carritos Hot Wheels
 const carColors = [
@@ -77,6 +81,33 @@ function createPlanets(count) {
 const stars = createStars(300);
 const cars = createCars(8);
 const planets = createPlanets(4);
+
+// Controles de música
+musicToggle.addEventListener('click', () => {
+    if (musicPlaying) {
+        backgroundMusic.pause();
+        musicToggle.textContent = '🔊 Música';
+        musicToggle.classList.remove('playing');
+        musicPlaying = false;
+    } else {
+        backgroundMusic.play().catch(err => {
+            console.log('Error al reproducir música:', err);
+            nowPlaying.textContent = 'Error al cargar la música';
+        });
+        musicToggle.textContent = '🔊 Música (Reproduciendo)';
+        musicToggle.classList.add('playing');
+        musicPlaying = true;
+    }
+});
+
+// Auto-reproducir música cuando se cargue (con permiso del navegador)
+window.addEventListener('load', () => {
+    backgroundMusic.volume = 0.3;
+    backgroundMusic.play().catch(err => {
+        console.log('Auto-play bloqueado. El usuario debe hacer clic en el botón');
+        musicToggle.textContent = '🔊 Música (Haz clic para reproducir)';
+    });
+});
 
 // Dibujar estrella
 function drawStar(star) {
